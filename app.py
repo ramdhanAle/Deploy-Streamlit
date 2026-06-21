@@ -95,14 +95,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Load artifacts ───────────────────────────────────────────────────────────
-
-
 @st.cache_resource
 def load_artifacts():
     model = joblib.load('model.pkl')
     district_mean_price = joblib.load('district_mean_price.pkl')
     return model, district_mean_price
-
 
 model, district_mean_price = load_artifacts()
 
@@ -125,14 +122,13 @@ with st.sidebar:
     property_condition = st.selectbox(
         "Kondisi Properti",
         options=[0, 1, 2, 3, 4],
-        format_func=lambda x: ["Butuh Renovasi", "Bagus",
-                               "Bagus Sekali", "Sudah Renovasi", "Baru"][x]
+        format_func=lambda x: ["Butuh Renovasi","Bagus","Bagus Sekali","Sudah Renovasi","Baru"][x]
     )
     garages = st.number_input("Garages", 0, 5, 0)
     furnishing = st.selectbox(
         "Furnishing",
         options=[0, 1, 2],
-        format_func=lambda x: ["Unfurnished", "Semi Furnished", "Furnished"][x]
+        format_func=lambda x: ["Unfurnished","Semi Furnished","Furnished"][x]
     )
 
     st.markdown('<div class="predict-btn">', unsafe_allow_html=True)
@@ -141,8 +137,7 @@ with st.sidebar:
 
 # ── Main area header ─────────────────────────────────────────────────────────
 st.markdown("# 🏠 Prediksi Harga Rumah Tangerang")
-st.markdown(
-    "Estimasi harga properti berbasis machine learning dengan analisis visual lengkap.")
+st.markdown("Estimasi harga properti berbasis machine learning dengan analisis visual lengkap.")
 st.markdown("---")
 
 # ── Session state: simpan hasil prediksi agar tidak hilang saat re-run ────────
@@ -169,26 +164,26 @@ if "prediction" not in st.session_state:
     st.stop()
 
 # Ambil dari session state
-prediction = st.session_state["prediction"]
-inp = st.session_state["inputs"]
-district = inp["district"]
-facilities = inp["facilities"]
-bedrooms = inp["bedrooms"]
-bathrooms = inp["bathrooms"]
-land_size = inp["land_size"]
+prediction    = st.session_state["prediction"]
+inp           = st.session_state["inputs"]
+district      = inp["district"]
+facilities    = inp["facilities"]
+bedrooms      = inp["bedrooms"]
+bathrooms     = inp["bathrooms"]
+land_size     = inp["land_size"]
 building_size = inp["building_size"]
-carports = inp["carports"]
-electricity = inp["electricity"]
+carports      = inp["carports"]
+electricity   = inp["electricity"]
 maid_bedrooms = inp["maid_bedrooms"]
-maid_bathrooms = inp["maid_bathrooms"]
-floors = inp["floors"]
+maid_bathrooms= inp["maid_bathrooms"]
+floors        = inp["floors"]
 property_condition = inp["property_condition"]
-garages = inp["garages"]
-furnishing = inp["furnishing"]
-district_encoded = inp["district_encoded"]
+garages       = inp["garages"]
+furnishing    = inp["furnishing"]
+district_encoded   = inp["district_encoded"]
 
 # Helper prices
-price_B = prediction / 1e9
+price_B        = prediction / 1e9
 price_per_land = prediction / land_size if land_size > 0 else 0
 price_per_bldg = prediction / building_size if building_size > 0 else 0
 
@@ -217,8 +212,7 @@ with c3:
     </div>""", unsafe_allow_html=True)
 
 # ── Row 2: Gauge + Radar ──────────────────────────────────────────────────────
-st.markdown('<p class="section-title">📊 Visualisasi Harga & Profil Properti</p>',
-            unsafe_allow_html=True)
+st.markdown('<p class="section-title">📊 Visualisasi Harga & Profil Properti</p>', unsafe_allow_html=True)
 col_g, col_r = st.columns(2)
 
 with col_g:
@@ -228,12 +222,10 @@ with col_g:
     fig_gauge = go.Figure(go.Indicator(
         mode="gauge+number+delta",
         value=prediction / 1e9,
-        number={"suffix": " M", "valueformat": ".2f",
-                "font": {"size": 28, "color": "#1A1F36"}},
+        number={"suffix": " M", "valueformat": ".2f", "font": {"size": 28, "color": "#1A1F36"}},
         delta={"reference": district_mean_price.mean() / 1e9, "valueformat": ".2f",
                "suffix": " M", "relative": False},
-        title={"text": "Estimasi Harga (Milyar Rp)", "font": {
-            "size": 13, "color": "#64748B"}},
+        title={"text": "Estimasi Harga (Milyar Rp)", "font": {"size": 13, "color": "#64748B"}},
         gauge={
             "axis": {"range": [min_p/1e9, max_p/1e9], "tickformat": ".1f",
                      "ticksuffix": "M", "tickfont": {"size": 10}},
@@ -257,12 +249,10 @@ with col_g:
 
 with col_r:
     # Radar / spider chart
-    cond_label = ["Butuh Renovasi", "Bagus", "Bagus Sekali",
-                  "Sudah Renovasi", "Baru"][property_condition]
-    furnish_label = ["Unfurnished", "Semi Furnished", "Furnished"][furnishing]
+    cond_label = ["Butuh Renovasi","Bagus","Bagus Sekali","Sudah Renovasi","Baru"][property_condition]
+    furnish_label = ["Unfurnished","Semi Furnished","Furnished"][furnishing]
 
-    categories = ["Kamar Tidur", "Kamar Mandi",
-                  "Lahan", "Bangunan", "Fasilitas", "Lantai"]
+    categories = ["Kamar Tidur","Kamar Mandi","Lahan","Bangunan","Fasilitas","Lantai"]
     # normalize 0–10 scale
     vals = [
         min(bedrooms / 10 * 10, 10),
@@ -282,12 +272,10 @@ with col_r:
     ))
     fig_radar.update_layout(
         polar=dict(
-            radialaxis=dict(visible=True, range=[
-                            0, 10], tickfont=dict(size=9)),
+            radialaxis=dict(visible=True, range=[0, 10], tickfont=dict(size=9)),
             angularaxis=dict(tickfont=dict(size=11))
         ),
-        title=dict(text="Profil Fitur Properti (skor 0–10)",
-                   font=dict(size=13, color="#64748B"), x=0.5),
+        title=dict(text="Profil Fitur Properti (skor 0–10)", font=dict(size=13, color="#64748B"), x=0.5),
         height=280,
         margin=dict(t=50, b=10, l=40, r=40),
         paper_bgcolor="white",
@@ -297,8 +285,7 @@ with col_r:
     st.plotly_chart(fig_radar, use_container_width=True)
 
 # ── Row 3: District comparison + Feature bar ──────────────────────────────────
-st.markdown('<p class="section-title">📍 Perbandingan Harga & Kontribusi Fitur</p>',
-            unsafe_allow_html=True)
+st.markdown('<p class="section-title">📍 Perbandingan Harga & Kontribusi Fitur</p>', unsafe_allow_html=True)
 col_d, col_f = st.columns(2)
 
 with col_d:
@@ -308,8 +295,7 @@ with col_d:
         "Harga Rata-Rata (M)": district_mean_price.values / 1e9
     }).sort_values("Harga Rata-Rata (M)", ascending=True)
 
-    colors = ["#6366F1" if d ==
-              district else "#CBD5E1" for d in df_dist["District"]]
+    colors = ["#6366F1" if d == district else "#CBD5E1" for d in df_dist["District"]]
     fig_dist = go.Figure(go.Bar(
         x=df_dist["Harga Rata-Rata (M)"],
         y=df_dist["District"],
@@ -327,8 +313,7 @@ with col_d:
         annotation_font_color="#F59E0B"
     )
     fig_dist.update_layout(
-        title=dict(text="Rata-rata Harga per Distrik",
-                   font=dict(size=13, color="#64748B")),
+        title=dict(text="Rata-rata Harga per Distrik", font=dict(size=13, color="#64748B")),
         xaxis_title="Milyar Rp",
         height=max(300, len(district_mean_price) * 28),
         margin=dict(t=40, b=30, l=10, r=60),
@@ -346,9 +331,9 @@ with col_f:
         floors, property_condition, garages, furnishing, district_encoded
     ]
     feat_names = [
-        "Fasilitas", "Bedrooms", "Bathrooms", "Land Size (m²)",
-        "Building Size (m²)", "Carports", "Electricity (VA)", "Maid BR",
-        "Maid Bath", "Floors", "Kondisi Properti", "Garages", "Furnishing", "—"
+        "Fasilitas","Bedrooms","Bathrooms","Land Size (m²)",
+        "Building Size (m²)","Carports","Electricity (VA)","Maid BR",
+        "Maid Bath","Floors","Kondisi Properti","Garages","Furnishing","—"
     ]
     # Kenaikan 1 satuan yang realistis per fitur
     steps = [1, 1, 1, 10, 10, 1, 100, 1, 1, 1, 1, 1, 1, 0]
@@ -368,15 +353,13 @@ with col_f:
         "Delta (Juta Rp)": deltas[:-1]
     }).sort_values("Delta (Juta Rp)", ascending=True)
 
-    bar_colors = ["#10B981" if v >=
-                  0 else "#EF4444" for v in df_sens["Delta (Juta Rp)"]]
+    bar_colors = ["#10B981" if v >= 0 else "#EF4444" for v in df_sens["Delta (Juta Rp)"]]
     fig_feat = go.Figure(go.Bar(
         x=df_sens["Delta (Juta Rp)"],
         y=df_sens["Fitur"],
         orientation="h",
         marker_color=bar_colors,
-        text=[f"+{v:.1f}Jt" if v >=
-              0 else f"{v:.1f}Jt" for v in df_sens["Delta (Juta Rp)"]],
+        text=[f"+{v:.1f}Jt" if v >= 0 else f"{v:.1f}Jt" for v in df_sens["Delta (Juta Rp)"]],
         textposition="outside",
         textfont=dict(size=9)
     ))
@@ -396,8 +379,7 @@ with col_f:
     st.plotly_chart(fig_feat, use_container_width=True)
 
 # ── Row 4: Price range simulation ─────────────────────────────────────────────
-st.markdown('<p class="section-title">📈 Simulasi Sensitivitas Harga vs Luas Tanah</p>',
-            unsafe_allow_html=True)
+st.markdown('<p class="section-title">📈 Simulasi Sensitivitas Harga vs Luas Tanah</p>', unsafe_allow_html=True)
 
 land_range = np.arange(30, 1001, 10)
 prices_sim = []
@@ -429,29 +411,22 @@ fig_sim.update_layout(
     paper_bgcolor="white", plot_bgcolor="white",
     xaxis=dict(gridcolor="#F1F5F9"),
     yaxis=dict(gridcolor="#F1F5F9"),
-    legend=dict(orientation="h", yanchor="bottom",
-                y=1.02, xanchor="right", x=1)
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
 )
 st.plotly_chart(fig_sim, use_container_width=True)
 
 # ── Row 5: Analisis LLM (Groq) ───────────────────────────────────────────────
-st.markdown('<p class="section-title">🤖 Analisis AI — Interpretasi Hasil Prediksi</p>',
-            unsafe_allow_html=True)
+st.markdown('<p class="section-title">🤖 Analisis AI — Interpretasi Hasil Prediksi</p>', unsafe_allow_html=True)
 
 # Siapkan ringkasan sensitivitas untuk konteks LLM
-top_positive = df_sens[df_sens["Delta (Juta Rp)"] > 0].sort_values(
-    "Delta (Juta Rp)", ascending=False).head(3)
-top_negative = df_sens[df_sens["Delta (Juta Rp)"] < 0].sort_values(
-    "Delta (Juta Rp)").head(3)
+top_positive = df_sens[df_sens["Delta (Juta Rp)"] > 0].sort_values("Delta (Juta Rp)", ascending=False).head(3)
+top_negative = df_sens[df_sens["Delta (Juta Rp)"] < 0].sort_values("Delta (Juta Rp)").head(3)
 
-sens_pos_text = ", ".join(
-    [f"{r['Fitur']} (+{r['Delta (Juta Rp)']:.1f} Jt)" for _, r in top_positive.iterrows()])
-sens_neg_text = ", ".join(
-    [f"{r['Fitur']} ({r['Delta (Juta Rp)']:.1f} Jt)" for _, r in top_negative.iterrows()])
+sens_pos_text = ", ".join([f"{r['Fitur']} (+{r['Delta (Juta Rp)']:.1f} Jt)" for _, r in top_positive.iterrows()])
+sens_neg_text = ", ".join([f"{r['Fitur']} ({r['Delta (Juta Rp)']:.1f} Jt)" for _, r in top_negative.iterrows()])
 
-kondisi_label = ["Butuh Renovasi", "Bagus", "Bagus Sekali",
-                 "Sudah Renovasi", "Baru"][property_condition]
-furnish_label = ["Unfurnished", "Semi Furnished", "Furnished"][furnishing]
+kondisi_label = ["Butuh Renovasi","Bagus","Bagus Sekali","Sudah Renovasi","Baru"][property_condition]
+furnish_label = ["Unfurnished","Semi Furnished","Furnished"][furnishing]
 dist_avg = district_mean_price[district] / 1e9
 dist_rank = int((district_mean_price.rank(ascending=False)[district]))
 dist_total = len(district_mean_price)
@@ -496,13 +471,11 @@ with col_model:
         label_visibility="collapsed"
     )
 with col_btn:
-    analyze_clicked = st.button(
-        "✨ Generate Analisis AI", use_container_width=True)
+    analyze_clicked = st.button("✨ Generate Analisis AI", use_container_width=True)
 
 if analyze_clicked:
     if not groq_api_key:
-        st.warning(
-            "⚠️ GROQ_API_KEY belum diset. Tambahkan di Settings → Secrets.")
+        st.warning("⚠️ GROQ_API_KEY belum diset. Tambahkan di Settings → Secrets.")
     else:
         try:
             from groq import Groq
@@ -531,8 +504,7 @@ if analyze_clicked:
                 }
 
         except ImportError:
-            st.error(
-                "Package `groq` belum terinstall. Tambahkan `groq` di packages.txt")
+            st.error("Package `groq` belum terinstall. Tambahkan `groq` di packages.txt")
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
@@ -546,8 +518,7 @@ if st.session_state.get("ai_analysis"):
     """ + result["text"].replace("\n", "<br>") + """
     </div>
     """, unsafe_allow_html=True)
-    st.caption(
-        f"Dianalisis oleh: {result['model']} via Groq · {result['tokens']} tokens digunakan")
+    st.caption(f"Dianalisis oleh: {result['model']} via Groq · {result['tokens']} tokens digunakan")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
